@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 public class PlayerInteractionController : MonoBehaviour
 {
@@ -90,5 +93,35 @@ public class PlayerInteractionController : MonoBehaviour
         }
         _inventory.Add(item);
         return true;
+    }
+
+    public bool CanSpendItems(List<InventoryItem> items)
+    {
+        Dictionary<string, uint> counts = new Dictionary<string, uint>();
+        foreach (var item in _inventory)
+        {
+            if (!counts.ContainsKey(item.Name))
+            {
+                counts[item.Name] = 0;
+            }
+            counts[item.Name] += 1;
+        }
+
+        foreach (var item in items)
+        {
+            if (!counts.ContainsKey(item.Name) || counts[item.Name] == 0)
+            {
+                return false;
+            }
+
+            counts[item.Name]--;
+        }
+
+        return true;
+    }
+
+    public bool RemoveItem(InventoryItem item)
+    {
+        return _inventory.Remove(_inventory.First(it => it.Name == item.Name));
     }
 }
