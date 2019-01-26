@@ -21,4 +21,8 @@ public class PickableItem : InteractableItem
         }
 
     }
+    public override uint GetUseTime(PlayerInteractionController Caller)
+    {
+        return interactionTime;
+    }
 }
