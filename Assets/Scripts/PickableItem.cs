@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class PickableItem : InteractableItem
 {
-    public GameObject itemPrefab;
     public string itemName;
-    private InventoryItem item;
+    private InventoryItem _item;
     
     void Start()
     {
-        item = new InventoryItem(itemPrefab, itemName);
+        _item = new InventoryItem();
+        _item.Name = itemName;
     }
 
     public override void Use(PlayerInteractionController Caller)
     {
-        if (Caller.AddItem(item))
+        if (Caller.AddItem(_item))
         {
             Destroy(this.gameObject);
         }
