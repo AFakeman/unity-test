@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class CapsuleMove : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour
 {
     public float speed = 1000;
     private Rigidbody rb;
@@ -18,7 +19,6 @@ public class CapsuleMove : MonoBehaviour
     {
         float vert = Input.GetAxis("Vertical");
         float horizontal = Input.GetAxis("Horizontal");
-
         Vector3 move = new Vector3(horizontal, 0, vert) * speed * Time.deltaTime;
         rb.MovePosition(transform.position + move);
     }
