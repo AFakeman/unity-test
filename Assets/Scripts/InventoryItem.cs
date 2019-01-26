@@ -1,18 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryItem : MonoBehaviour
+public class InventoryItem
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject Prefab;
+    public string Name;
 
-    // Update is called once per frame
-    void Update()
+    public InventoryItem(GameObject pref, string name)
     {
-        
+        Prefab = pref;
+        this.Name = name;
     }
 }
