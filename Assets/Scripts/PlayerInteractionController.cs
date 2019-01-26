@@ -6,6 +6,8 @@ public class PlayerInteractionController : MonoBehaviour
 {
     private const uint maxInventorySize = 5;
     private List<InventoryItem> _inventory = new List<InventoryItem>();
+    private uint WaitTime;
+    private Animator animator;
 
     public List<InventoryItem> Inventory
     {
@@ -13,11 +15,16 @@ public class PlayerInteractionController : MonoBehaviour
         protected set { _inventory = value; }
     }
     private InteractableItem _interactableItem;
+    private InteractableItem CurrentInteractableItem;
 
     // Start is called before the first frame update
     void Start()
     {
 
+    }
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -25,12 +32,31 @@ public class PlayerInteractionController : MonoBehaviour
     {
         var use = Input.GetKey(KeyCode.E);
 
-        if (use && _interactableItem)
+        if (WaitTime != 0)
         {
-            Debug.unityLogger.Log("Use");
-            _interactableItem.Use(this);
+            WaitTime--;
+        }
+        else
+        {
+            if (_interactableItem && CurrentInteractableItem)
+            { 
+                Debug.unityLogger.Log("Use");
+                _interactableItem.Use(this);
+                CurrentInteractableItem = null;
+                animator.SetBool("action", false);
+                Debug.unityLogger.Log(animator.GetBool("action"));
+            }
+            if (use && _interactableItem)
+            {
+                WaitTime = _interactableItem.GetUseTime(this);
+                CurrentInteractableItem = _interactableItem;
+                animator.SetBool("action", true);
+                Debug.unityLogger.Log(animator.GetBool("action"));
+
+            }
         }
     }
+
     
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -51,6 +77,8 @@ public class PlayerInteractionController : MonoBehaviour
         {
             Debug.unityLogger.Log("InteractbleItem exited");
             _interactableItem = null;
+            CurrentInteractableItem = null;
+            WaitTime = 0;
         }
     }
 

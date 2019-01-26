@@ -93,6 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1df3ead09414a7d80eb2024a073f65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactionTime: 25
   itemPrefab: {fileID: 3305820243946660731, guid: 37ee3b52cc6224c1b92de35c86dbc407,
     type: 3}
   itemName: WaterBottleEmpty
