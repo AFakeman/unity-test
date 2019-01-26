@@ -32,7 +32,7 @@ public class PlayerInteractionController : MonoBehaviour
         }
     }
     
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.unityLogger.Log("TriggerEnter");
         var a = other.gameObject.GetComponent<InteractableItem>();
@@ -43,7 +43,7 @@ public class PlayerInteractionController : MonoBehaviour
         }
     }
     
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         Debug.unityLogger.Log("TriggerExit");
         var a = other.gameObject.GetComponent<InteractableItem>();
