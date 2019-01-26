@@ -10,4 +10,9 @@ public class TeleportItem : InteractableItem
     {
         Caller.transform.position = Target.transform.position;
     }
+    
+    public override uint GetUseTime(PlayerInteractionController Caller)
+    {
+        return interactionTime;
+    }
 }

@@ -27,4 +27,9 @@ public class ItemSpendingItem : InteractableItem
             Debug.unityLogger.Log("No money, honey!");
         }
     }
+
+    public override uint GetUseTime(PlayerInteractionController Caller)
+    {
+        return interactionTime;
+    }
 }
