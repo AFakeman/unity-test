@@ -10,6 +10,7 @@ public class PlayerInteractionController : MonoBehaviour
     private const uint maxInventorySize = 5;
     private List<InventoryItem> _inventory = new List<InventoryItem>();
     private uint WaitTime;
+    private uint Cooldown;
     private Animator animator;
 
     public List<InventoryItem> Inventory
@@ -35,9 +36,16 @@ public class PlayerInteractionController : MonoBehaviour
     {
         var use = Input.GetKey(KeyCode.E);
 
-        if (WaitTime != 0)
+        if (WaitTime != 0 || Cooldown != 0)
         {
-            WaitTime--;
+            if (WaitTime != 0)
+            {
+                WaitTime--;
+            }
+            else
+            {
+                Cooldown--;
+            }
         }
         else
         {
@@ -48,6 +56,7 @@ public class PlayerInteractionController : MonoBehaviour
                 CurrentInteractableItem = null;
                 animator.SetBool("action", false);
                 Debug.unityLogger.Log(animator.GetBool("action"));
+                Cooldown = 45;
             }
             if (use && _interactableItem)
             {
@@ -81,7 +90,7 @@ public class PlayerInteractionController : MonoBehaviour
             Debug.unityLogger.Log("InteractbleItem exited");
             _interactableItem = null;
             CurrentInteractableItem = null;
-            WaitTime = 0;
+            animator.SetBool("action", false);
         }
     }
 
