@@ -5,13 +5,19 @@ using UnityEngine;
 public class PlayerInteractionController : MonoBehaviour
 {
     private const uint maxInventorySize = 5;
-    private List<InventoryItem> _inventory;
+    private List<InventoryItem> _inventory = new List<InventoryItem>();
+
+    public List<InventoryItem> Inventory
+    {
+        get { return _inventory; }
+        protected set { _inventory = value; }
+    }
     private InteractableItem _interactableItem;
 
     // Start is called before the first frame update
     void Start()
     {
-       _inventory = new List<InventoryItem>();
+
     }
 
     // Update is called once per frame
