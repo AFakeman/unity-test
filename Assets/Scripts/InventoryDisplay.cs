@@ -7,7 +7,7 @@ using UnityEngine;
 public class InventoryDisplay : MonoBehaviour
 {
     public PlayerInteractionController player;
-    public float itemSpacing = 1.5f;
+    public ItemBubble itemBubble;
 
     [System.Serializable]
     public struct ItemPair
@@ -42,30 +42,14 @@ public class InventoryDisplay : MonoBehaviour
         
     }
 
+    // Renders items. The item sprites should be the same size, or,
+    // at least, the same pixels per unit.
     private void RenderItems(List<InventoryItem> toRender)
     {
         Debug.unityLogger.Log("RedrawInventory");
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        renderedItems = new List<InventoryItem>();
-
-        float xOffset = 0;
-        int itemNumber = 0;
-        foreach (InventoryItem item in toRender)
-        {
-            GameObject newObj = new GameObject("Item" + itemNumber);
-            var spriteRenderer = newObj.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = iconSprites[item.Name];
-            newObj.transform.parent = transform;
-            newObj.transform.localPosition = new Vector3(xOffset, 0, 0);
-            newObj.layer = 5;
-            renderedItems.Add(item);
-            xOffset += -itemSpacing;
-            itemNumber++;
-        }
+        renderedItems = new List<InventoryItem>(toRender);
+        var spritesToRender = toRender.Select(item => iconSprites[item.Name]).ToList();
+        itemBubble.RenderSprites(spritesToRender);
     }
 }        
 

@@ -8,7 +8,7 @@ using UnityEngine.Experimental.Rendering;
 public class PlayerInteractionController : MonoBehaviour
 {
     public Sprite itemUseThought;
-    public PlayerThoughtController thonk;
+    public ItemBubble thoughtBubble;
     
     private const uint maxInventorySize = 5;
     private uint WaitTime;
@@ -119,7 +119,7 @@ public class PlayerInteractionController : MonoBehaviour
     {
         if (!item)
         {
-            thonk.SetThought(null);
+            thoughtBubble.RenderSprites(null);
             return;
         }
         var thought = new List<Sprite>();
@@ -135,7 +135,7 @@ public class PlayerInteractionController : MonoBehaviour
         {
             thought.Add(itemUseThought);
         }
-        thonk.SetThought(thought);
+        thoughtBubble.RenderSprites(thought);
     }
     
     private void OnTriggerExit2D(Collider2D other)

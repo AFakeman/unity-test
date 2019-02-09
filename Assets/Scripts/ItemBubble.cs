@@ -1,17 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerThoughtController : MonoBehaviour
+public class ItemBubble : MonoBehaviour
 {
     // Offsets are measured in pixels, pixel density
     // is assumed to be the same as of the bubble itself.
-    public int marginLeft = 5;
-    public int marginRight = 5;
-    public int marginTop = 5;
-    public int marginBottom = 5;
-    public int spacingX = 5;
+    public int marginLeft = 4;
+    public int marginRight = 3;
+    public int marginTop = 3;
+    public int marginBottom = 4;
+    public int spacingX = 2;
     public string sortingLayerName = "UI";
     public int sortingOrder = 1;
 
@@ -37,9 +38,9 @@ public class PlayerThoughtController : MonoBehaviour
         return p / _bubble_sr.sprite.pixelsPerUnit;
     }
 
-    public void SetThought(List<Sprite> icons)
+    public void RenderSprites(List<Sprite> icons)
     {
-        ResetThought();
+        ResetSprites();
         if (icons == null || icons.Count == 0)
         {
             gameObject.SetActive(false);
@@ -69,6 +70,7 @@ public class PlayerThoughtController : MonoBehaviour
             rend.sortingOrder = sortingOrder;
 
             gameObject.transform.localScale = Vector3.one;
+            gameObject.layer = 5;
         }
 
         width += (icons.Count - 1) * spacingX;
@@ -81,9 +83,11 @@ public class PlayerThoughtController : MonoBehaviour
         float xPos = - (width / 2.0f) + marginLeft;
         float yPos = marginBottom + maxSpriteHeight / 2.0f - height / 2.0f;
 
+            Debug.unityLogger.Log("START FOREACH");
         foreach (Transform trans in transform)
         {
             var spriteWidth = trans.GetComponent<SpriteRenderer>().sprite.rect.width;
+            Debug.unityLogger.Log(xPos);
             trans.localPosition = new Vector3(
                 PixelsToUnits(xPos + spriteWidth / 2), 
                 PixelsToUnits(yPos),
@@ -91,14 +95,18 @@ public class PlayerThoughtController : MonoBehaviour
             );
             xPos += (int) spriteWidth + spacingX;
         }
+            Debug.unityLogger.Log("STOP FOREACH");
 
     }
 
-    public void ResetThought()
+    public void ResetSprites()
     {
-        foreach (Transform child in gameObject.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        for (int i = transform.childCount - 1; i >= 0; --i)
+         {
+             Transform child = transform.GetChild(i);
+             child.parent = null;
+             GameObject.Destroy(child.gameObject);
+         }
+
     }
 }
