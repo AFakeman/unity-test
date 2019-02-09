@@ -76,18 +76,14 @@ public class ItemBubble : MonoBehaviour
         width += (icons.Count - 1) * spacingX;
 
         int height = maxSpriteHeight + marginTop + marginBottom;
-        Debug.unityLogger.Log(width);
-        Debug.unityLogger.Log(height);
         _bubble_sr.size = new Vector2(PixelsToUnits(width), PixelsToUnits(height));
 
         float xPos = - (width / 2.0f) + marginLeft;
         float yPos = marginBottom + maxSpriteHeight / 2.0f - height / 2.0f;
 
-            Debug.unityLogger.Log("START FOREACH");
         foreach (Transform trans in transform)
         {
             var spriteWidth = trans.GetComponent<SpriteRenderer>().sprite.rect.width;
-            Debug.unityLogger.Log(xPos);
             trans.localPosition = new Vector3(
                 PixelsToUnits(xPos + spriteWidth / 2), 
                 PixelsToUnits(yPos),
@@ -95,7 +91,6 @@ public class ItemBubble : MonoBehaviour
             );
             xPos += (int) spriteWidth + spacingX;
         }
-            Debug.unityLogger.Log("STOP FOREACH");
 
     }
 

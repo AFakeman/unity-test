@@ -20,6 +20,7 @@ public class InventoryDisplay : MonoBehaviour
     public Dictionary<string, Sprite> iconSprites;
 
     private List<InventoryItem> renderedItems = new List<InventoryItem>();
+    private SpriteRenderer _itemBubbleSR;
 
     // Start is called before the first frame update
     private void Start()
@@ -29,7 +30,11 @@ public class InventoryDisplay : MonoBehaviour
         {
             iconSprites[pair.Name] = pair.Sprite;
         }
-        
+    }
+
+    private void Awake()
+    {
+        _itemBubbleSR = itemBubble.GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -50,6 +55,15 @@ public class InventoryDisplay : MonoBehaviour
         renderedItems = new List<InventoryItem>(toRender);
         var spritesToRender = toRender.Select(item => iconSprites[item.Name]).ToList();
         itemBubble.RenderSprites(spritesToRender);
+        AlignBubble();
+    }
+
+    private void AlignBubble()
+    {
+        var xPos = -_itemBubbleSR.bounds.extents.x;
+        var yPos = -_itemBubbleSR.bounds.extents.y;
+        var zPos = itemBubble.transform.localPosition.z;
+        itemBubble.transform.localPosition = new Vector3(xPos, yPos, zPos);
     }
 }        
 
