@@ -11,33 +11,33 @@ public class PlayerInteractionController : MonoBehaviour
     public PlayerThoughtController thonk;
     
     private const uint maxInventorySize = 5;
-    private List<InventoryItem> _inventory = new List<InventoryItem>();
     private uint WaitTime;
     private uint Cooldown;
     private Animator animator;
     private InventoryDisplay _inventoryDisplay;
 
-    public List<InventoryItem> Inventory
-    {
-        get { return _inventory; }
-        protected set { _inventory = value; }
-    }
-    private InteractableItem _interactableItem;
-    private InteractableItem CurrentInteractableItem;
+    public List<InventoryItem> inventory;
+
+    private List<InteractableItem> _interactableItems;
+    private InteractableItem _itemInUse;
+    private InteractableItem _itemInMind;
+    private List<InventoryItem> _inventory = new List<InventoryItem>();
 
     // Start is called before the first frame update
     void Start()
     {
 
     }
-    void Awake()
+    
+    private void Awake()
     {
         animator = GetComponent<Animator>();
+        _interactableItems = new List<InteractableItem>();
         _inventoryDisplay = GameObject.Find("InventoryUI").GetComponent<InventoryDisplay>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         var use = Input.GetKey(KeyCode.E);
 
@@ -54,25 +54,53 @@ public class PlayerInteractionController : MonoBehaviour
         }
         else
         {
-            if (_interactableItem && CurrentInteractableItem)
+            if (_itemInUse)
             { 
                 Debug.unityLogger.Log("Use");
-                _interactableItem.Use(this);
-                CurrentInteractableItem = null;
+                _itemInUse.Use(this);
+                _itemInUse = null;
                 animator.SetBool("action", false);
                 Debug.unityLogger.Log(animator.GetBool("action"));
                 Cooldown = 45;
             }
-            if (use && _interactableItem)
+            else
             {
-                thonk.SetThought(null);
-                WaitTime = _interactableItem.GetUseTime(this);
-                CurrentInteractableItem = _interactableItem;
-                animator.SetBool("action", true);
-                Debug.unityLogger.Log(animator.GetBool("action"));
-
+                var closestItem = GetClosestInteractableItem();
+                if (use && closestItem)
+                {
+                    _itemInUse = closestItem;
+                    if (_itemInMind)
+                    {
+                        SetThoughtForInteractableItem(null);
+                    }
+                    WaitTime = closestItem.GetUseTime(this);
+                    animator.SetBool("action", true);
+                    Debug.unityLogger.Log(animator.GetBool("action"));
+                }
+                else if (_itemInMind != closestItem)
+                {
+                    _itemInMind = closestItem;
+                    SetThoughtForInteractableItem(closestItem);
+                }
             }
         }
+    }
+
+    private InteractableItem GetClosestInteractableItem()
+    {
+        float closestDist = float.MaxValue;
+        InteractableItem closestItem = null;
+        var currentPosition = transform.position;
+        foreach (InteractableItem item in _interactableItems)
+        {
+            var dist = Vector2.Distance(currentPosition, item.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closestItem = item;
+            }
+        }
+        return closestItem;
     }
 
     
@@ -83,58 +111,63 @@ public class PlayerInteractionController : MonoBehaviour
         if (a)
         {
             Debug.unityLogger.Log("InteractbleItem entered");
-            _interactableItem = a;
-            SetThoughtForInteractableItem(a);
+            _interactableItems.Add(a);
         }
     }
 
     private void SetThoughtForInteractableItem(InteractableItem item) 
     {
-            var thought = new List<Sprite>();
-            if (item is ItemSpendingItem it)
+        if (!item)
+        {
+            thonk.SetThought(null);
+            return;
+        }
+        var thought = new List<Sprite>();
+        if (item is ItemSpendingItem it)
+        {
+            foreach (InventoryItem inventoryItem in it.price)
             {
-                foreach (InventoryItem inventoryItem in it.price)
-                {
-                    var sprite = _inventoryDisplay.iconSprites[inventoryItem.Name];
-                    thought.Add(sprite);
-                }
+                var sprite = _inventoryDisplay.iconSprites[inventoryItem.Name];
+                thought.Add(sprite);
             }
-            else
-            {
-                thought.Add(itemUseThought);
-            }
-            thonk.SetThought(thought);
+        }
+        else
+        {
+            thought.Add(itemUseThought);
+        }
+        thonk.SetThought(thought);
     }
     
     private void OnTriggerExit2D(Collider2D other)
     {
         Debug.unityLogger.Log("TriggerExit");
         var a = other.gameObject.GetComponent<InteractableItem>();
-        if (a && a == _interactableItem)
+        
+        if (a && a == _itemInUse)
         {
-            Debug.unityLogger.Log("InteractbleItem exited");
-            _interactableItem = null;
-            CurrentInteractableItem = null;
+            Debug.unityLogger.Log("Use interrupted");
+            _itemInUse = null;
             animator.SetBool("action", false);
             WaitTime = 0;
-            thonk.SetThought(null);
         }
+
+        _interactableItems.Remove(a);
     }
 
     public bool AddItem(InventoryItem item)
     {
-        if (_inventory.Count >= maxInventorySize)
+        if (inventory.Count >= maxInventorySize)
         {
             return false;
         }
-        _inventory.Add(item);
+        inventory.Add(item);
         return true;
     }
 
     public bool CanSpendItems(List<InventoryItem> items)
     {
         Dictionary<string, uint> counts = new Dictionary<string, uint>();
-        foreach (var item in _inventory)
+        foreach (var item in inventory)
         {
             if (!counts.ContainsKey(item.Name))
             {
@@ -158,6 +191,6 @@ public class PlayerInteractionController : MonoBehaviour
 
     public bool RemoveItem(InventoryItem item)
     {
-        return _inventory.Remove(_inventory.First(it => it.Name == item.Name));
+        return inventory.Remove(inventory.First(it => it.Name == item.Name));
     }
 }
