@@ -16,19 +16,18 @@ public class InventoryDisplay : MonoBehaviour
         public GameObject Prefab;
     }
 
-    [SerializeField]
     public List<ItemPair> ItemList;
-    private Dictionary<string, GameObject> _iconPrefabs;
+    public Dictionary<string, GameObject> iconPrefabs;
 
     private List<InventoryItem> renderedItems = new List<InventoryItem>();
 
     // Start is called before the first frame update
     void Start()
     {
-        _iconPrefabs = new Dictionary<string, GameObject>();
+        iconPrefabs = new Dictionary<string, GameObject>();
         foreach (var pair in ItemList)
         {
-            _iconPrefabs[pair.Name] = pair.Prefab;
+            iconPrefabs[pair.Name] = pair.Prefab;
         }
         
     }
@@ -53,14 +52,14 @@ public class InventoryDisplay : MonoBehaviour
 
         renderedItems = new List<InventoryItem>();
 
-        float zOffset = 0;
+        float xOffset = 0;
         foreach (InventoryItem item in toRender)
         {
-            GameObject newObj = Object.Instantiate(_iconPrefabs[item.Name], transform);
-            newObj.transform.localPosition += new Vector3(zOffset, 0, 0);
+            GameObject newObj = Object.Instantiate(iconPrefabs[item.Name], transform);
+            newObj.transform.localPosition += new Vector3(xOffset, 0, 0);
             newObj.layer = 5;
             renderedItems.Add(item);
-            zOffset += -itemSpacing;
+            xOffset += -itemSpacing;
         }
     }
 }        

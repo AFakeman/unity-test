@@ -7,11 +7,15 @@ using UnityEngine.Experimental.Rendering;
 
 public class PlayerInteractionController : MonoBehaviour
 {
+    public Sprite itemUseThought;
+    public PlayerThoughtController thonk;
+    
     private const uint maxInventorySize = 5;
     private List<InventoryItem> _inventory = new List<InventoryItem>();
     private uint WaitTime;
     private uint Cooldown;
     private Animator animator;
+    private InventoryDisplay _inventoryDisplay;
 
     public List<InventoryItem> Inventory
     {
@@ -29,6 +33,7 @@ public class PlayerInteractionController : MonoBehaviour
     void Awake()
     {
         animator = GetComponent<Animator>();
+        _inventoryDisplay = GameObject.Find("InventoryUI").GetComponent<InventoryDisplay>();
     }
 
     // Update is called once per frame
@@ -60,6 +65,7 @@ public class PlayerInteractionController : MonoBehaviour
             }
             if (use && _interactableItem)
             {
+                thonk.SetThought(null);
                 WaitTime = _interactableItem.GetUseTime(this);
                 CurrentInteractableItem = _interactableItem;
                 animator.SetBool("action", true);
@@ -78,7 +84,26 @@ public class PlayerInteractionController : MonoBehaviour
         {
             Debug.unityLogger.Log("InteractbleItem entered");
             _interactableItem = a;
+            SetThoughtForInteractableItem(a);
         }
+    }
+
+    private void SetThoughtForInteractableItem(InteractableItem item) 
+    {
+            var thought = new List<Sprite>();
+            if (item is ItemSpendingItem it)
+            {
+                foreach (InventoryItem inventoryItem in it.price)
+                {
+                    var sprite = _inventoryDisplay.iconPrefabs[inventoryItem.Name].GetComponent<SpriteRenderer>().sprite;
+                    thought.Add(sprite);
+                }
+            }
+            else
+            {
+                thought.Add(itemUseThought);
+            }
+            thonk.SetThought(thought);
     }
     
     private void OnTriggerExit2D(Collider2D other)
@@ -91,6 +116,8 @@ public class PlayerInteractionController : MonoBehaviour
             _interactableItem = null;
             CurrentInteractableItem = null;
             animator.SetBool("action", false);
+            WaitTime = 0;
+            thonk.SetThought(null);
         }
     }
 
