@@ -35,9 +35,9 @@ public class InventoryDisplay : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (!renderedItems.SequenceEqual(player.Inventory))
+        if (!renderedItems.SequenceEqual(player.inventory))
         {
-            RenderItems(player.Inventory);
+            RenderItems(player.inventory);
         }
         
     }
