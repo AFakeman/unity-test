@@ -9,4 +9,9 @@ public abstract class InteractableItem : MonoBehaviour
 
     public abstract void Use(PlayerInteractionController Caller);
     public abstract uint GetUseTime(PlayerInteractionController Caller);
+
+    public virtual bool Enabled()
+    {
+        return true;
+    }
 }

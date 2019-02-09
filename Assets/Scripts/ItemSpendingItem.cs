@@ -5,11 +5,18 @@ using UnityEngine.Experimental.Rendering;
 
 public class ItemSpendingItem : InteractableItem
 {
-    public List<InventoryItem> price;
+    [SerializeField]
+    private List<InventoryItem> price; 
+    
+    public virtual List<InventoryItem> Price
+    {
+        get => price;
+        set => price = value;
+    }
 
     public void SpendItems(PlayerInteractionController Caller)
     {
-        foreach (var item in price)
+        foreach (var item in Price)
         {
             Caller.RemoveItem(item);
         }
@@ -17,19 +24,29 @@ public class ItemSpendingItem : InteractableItem
 
     public override void Use(PlayerInteractionController Caller)
     {
-        if (Caller.CanSpendItems(price))
+        if (Caller.CanSpendItems(Price))
         {
             SpendItems(Caller);
-            Debug.unityLogger.Log("Here you go!");
+            ItemsSpent(Caller);
         }
         else
         {
-            Debug.unityLogger.Log("No money, honey!");
+            ItemsNotSpent(Caller);
         }
     }
 
     public override uint GetUseTime(PlayerInteractionController Caller)
     {
         return interactionTime;
+    }
+
+    protected virtual void ItemsSpent(PlayerInteractionController Caller)
+    {
+        Debug.unityLogger.Log("Here you go!");
+    }
+
+    protected virtual void ItemsNotSpent(PlayerInteractionController Caller)
+    {
+        Debug.unityLogger.Log("No money, honey!");
     }
 }
