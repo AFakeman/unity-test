@@ -14,8 +14,8 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
+  - Char
+  - Interior
   - 
   - 
   - 
@@ -40,4 +40,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1407109093
+    locked: 0
+  - name: Background Objects
+    uniqueID: 2162056925
+    locked: 0
+  - name: Collideble
+    uniqueID: 4167068061
+    locked: 0
+  - name: Foreground
+    uniqueID: 2343879577
     locked: 0
