@@ -71,6 +71,7 @@ public class PlayerInteractionController : MonoBehaviour
                     _itemInUse = closestItem;
                     if (_itemInMind)
                     {
+                        _itemInMind = null;
                         SetThoughtForInteractableItem(null);
                     }
                     WaitTime = closestItem.GetUseTime(this);
@@ -91,10 +92,11 @@ public class PlayerInteractionController : MonoBehaviour
         float closestDist = float.MaxValue;
         InteractableItem closestItem = null;
         var currentPosition = transform.position;
+        _interactableItems.RemoveAll(item => !item);
         foreach (InteractableItem item in _interactableItems)
         {
             var dist = Vector2.Distance(currentPosition, item.transform.position);
-            if (dist < closestDist)
+            if (dist < closestDist && item.Enabled())
             {
                 closestDist = dist;
                 closestItem = item;
@@ -125,7 +127,7 @@ public class PlayerInteractionController : MonoBehaviour
         var thought = new List<Sprite>();
         if (item is ItemSpendingItem it)
         {
-            foreach (InventoryItem inventoryItem in it.price)
+            foreach (InventoryItem inventoryItem in it.Price)
             {
                 var sprite = _inventoryDisplay.iconSprites[inventoryItem.Name];
                 thought.Add(sprite);
