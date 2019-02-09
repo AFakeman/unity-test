@@ -13,28 +13,27 @@ public class InventoryDisplay : MonoBehaviour
     public struct ItemPair
     {
         public string Name;
-        public GameObject Prefab;
+        public Sprite Sprite;
     }
 
-    [SerializeField]
     public List<ItemPair> ItemList;
-    private Dictionary<string, GameObject> _iconPrefabs;
+    public Dictionary<string, Sprite> iconSprites;
 
     private List<InventoryItem> renderedItems = new List<InventoryItem>();
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        _iconPrefabs = new Dictionary<string, GameObject>();
+        iconSprites = new Dictionary<string, Sprite>();
         foreach (var pair in ItemList)
         {
-            _iconPrefabs[pair.Name] = pair.Prefab;
+            iconSprites[pair.Name] = pair.Sprite;
         }
         
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (!renderedItems.SequenceEqual(player.Inventory))
         {
@@ -43,7 +42,7 @@ public class InventoryDisplay : MonoBehaviour
         
     }
 
-    void RenderItems(List<InventoryItem> toRender)
+    private void RenderItems(List<InventoryItem> toRender)
     {
         Debug.unityLogger.Log("RedrawInventory");
         foreach (Transform child in transform)
@@ -53,14 +52,19 @@ public class InventoryDisplay : MonoBehaviour
 
         renderedItems = new List<InventoryItem>();
 
-        float zOffset = 0;
+        float xOffset = 0;
+        int itemNumber = 0;
         foreach (InventoryItem item in toRender)
         {
-            GameObject newObj = Object.Instantiate(_iconPrefabs[item.Name], transform);
-            newObj.transform.localPosition += new Vector3(zOffset, 0, 0);
+            GameObject newObj = new GameObject("Item" + itemNumber);
+            var spriteRenderer = newObj.AddComponent<SpriteRenderer>();
+            spriteRenderer.sprite = iconSprites[item.Name];
+            newObj.transform.parent = transform;
+            newObj.transform.localPosition = new Vector3(xOffset, 0, 0);
             newObj.layer = 5;
             renderedItems.Add(item);
-            zOffset += -itemSpacing;
+            xOffset += -itemSpacing;
+            itemNumber++;
         }
     }
 }        
