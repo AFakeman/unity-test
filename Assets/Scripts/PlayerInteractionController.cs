@@ -95,7 +95,7 @@ public class PlayerInteractionController : MonoBehaviour
             {
                 foreach (InventoryItem inventoryItem in it.price)
                 {
-                    var sprite = _inventoryDisplay.iconPrefabs[inventoryItem.Name].GetComponent<SpriteRenderer>().sprite;
+                    var sprite = _inventoryDisplay.iconSprites[inventoryItem.Name];
                     thought.Add(sprite);
                 }
             }
