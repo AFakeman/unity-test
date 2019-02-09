@@ -12,6 +12,8 @@ public class PlayerThoughtController : MonoBehaviour
     public int marginTop = 5;
     public int marginBottom = 5;
     public int spacingX = 5;
+    public string sortingLayerName = "UI";
+    public int sortingOrder = 1;
 
     private SpriteRenderer _bubble_sr;
 
@@ -62,6 +64,10 @@ public class PlayerThoughtController : MonoBehaviour
             var spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = icon;
             gameObject.transform.parent = transform;
+            var rend = gameObject.GetComponent<SpriteRenderer>();
+            rend.sortingLayerName = sortingLayerName;
+            rend.sortingOrder = sortingOrder;
+
             gameObject.transform.localScale = Vector3.one;
         }
 
