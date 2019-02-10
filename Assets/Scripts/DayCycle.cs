@@ -14,7 +14,8 @@ public class DayCycle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _light = GetComponent<Light>();    
+        _light = GetComponent<Light>();
+        dayDuration = (int)(maxIntensity / 0.001f * speed);
     }
 
     // Update is called once per frame
@@ -36,6 +37,15 @@ public class DayCycle : MonoBehaviour
         {
             _sundown = !_sundown;
         }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            Debug.Log(GetCurrentTime());
+        }
+
         
+    }
+    public int GetCurrentTime()
+    {
+        return (int)(_light.intensity / (0.001 * speed));
     }
 }
