@@ -526,8 +526,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 567373837}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 4, z: 7.500003}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.5, y: 9.177, z: 7.62}
+  m_LocalScale: {x: 60, y: 60, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -569,12 +569,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f903d84b1b3738f48b3b465dd302ef13, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1ea7920236532cf4485e629accd2a3c1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 19.2, y: 10.8}
+  m_Size: {x: 1, y: 0.5625}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -6687,27 +6687,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2262001699665483376, guid: 25e60513e9e8c5747af689e234b67526,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6b10a03a601e04eab8a9fb37f5372309, type: 2}
-    - target: {fileID: 600671398, guid: 25e60513e9e8c5747af689e234b67526, type: 3}
-      propertyPath: m_SortingLayerID
-      value: -720480759
-      objectReference: {fileID: 0}
-    - target: {fileID: 600671398, guid: 25e60513e9e8c5747af689e234b67526, type: 3}
-      propertyPath: m_SortingLayer
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 194222648, guid: 25e60513e9e8c5747af689e234b67526, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.071875
-      objectReference: {fileID: 0}
-    - target: {fileID: 194222648, guid: 25e60513e9e8c5747af689e234b67526, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25e60513e9e8c5747af689e234b67526, type: 3}

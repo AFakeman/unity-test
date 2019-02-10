@@ -50,7 +50,7 @@ public class DayCycle : MonoBehaviour
             Debug.Log(hours + ":" + minutes);
             Debug.Log(_tickCoef + ":" + _ticksPassed + ":"+_dayspassed);
         }
-        _ticksPassed++;
+        
         if (_ticksPassed % dayDuration == 0)
         {
             _sundown = !_sundown;
@@ -60,7 +60,9 @@ public class DayCycle : MonoBehaviour
             }
         }
 
-        
+        _ticksPassed++;
+
+
     }
     /// <summary>
     /// Returns current time in minutes in 12 hour format
