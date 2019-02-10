@@ -9,43 +9,68 @@ public class DayCycle : MonoBehaviour
     public float maxIntensity = 2.5f;
 
     private Light _light;
-    private bool _sundown;
+    private int _ticksPassed;
+    private float _tickCoef, _intensityGain;
+    private bool _sundown = true;
+    private int _dayspassed;
 
     // Start is called before the first frame update
     void Start()
     {
         _light = GetComponent<Light>();
-        dayDuration = (int)(maxIntensity / 0.001f * speed);
+        _tickCoef = 720f / dayDuration; //there are 720 minutes in 12 hours, so half a full day
+
+        _intensityGain = maxIntensity / (dayDuration);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (_light.intensity > 0 && _sundown)
+        if (_sundown  && _light.intensity >= 0)
         {
             float intensity = _light.intensity;
-            intensity -= 0.001f*speed;
+            intensity -= _intensityGain*speed;
             _light.intensity = intensity;
         }
-        else if (_light.intensity <= 2.5f && _sundown == false)
+        else if (!_sundown  && _light.intensity <= maxIntensity)
         {
             float intensity = _light.intensity;
-            intensity += 0.001f*speed;
+            intensity += _intensityGain * speed;
             _light.intensity = intensity;
-        }
-        else if (_light.intensity <= 0 || _light.intensity > maxIntensity)
-        {
-            _sundown = !_sundown;
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            Debug.Log(GetCurrentTime());
+            int timeinMinutes = GetCurrentTime();
+            int hours = timeinMinutes / 60;
+            if (hours == 0)
+            {
+                hours = 12;
+            }
+            int minutes = timeinMinutes % 60;
+            Debug.Log(hours + ":" + minutes);
+            Debug.Log(_tickCoef + ":" + _ticksPassed + ":"+_dayspassed);
+        }
+        _ticksPassed++;
+        if (_ticksPassed % dayDuration == 0)
+        {
+            _sundown = !_sundown;
+            if (_ticksPassed % (dayDuration*2) == 0)
+            {
+                _dayspassed++;
+            }
         }
 
         
     }
+    /// <summary>
+    /// Returns current time in minutes in 12 hour format
+    /// </summary>
+    /// <returns></returns>
     public int GetCurrentTime()
     {
-        return (int)(_light.intensity / (0.001 * speed));
+        //return (int)(_light.intensity / (0.001 * speed));
+        int time = _ticksPassed % dayDuration;
+        int timeInMinutes = (int)((float)time * _tickCoef);
+        return timeInMinutes;
     }
 }
