@@ -65,14 +65,12 @@ public class DayCycle : MonoBehaviour
 
     }
     /// <summary>
-    /// Returns current time in minutes in 12 hour format
+    /// Returns current time in ticks
     /// </summary>
     /// <returns></returns>
     public int GetCurrentTime()
     {
-        //return (int)(_light.intensity / (0.001 * speed));
         int time = _ticksPassed % dayDuration;
-        int timeInMinutes = (int)((float)time * _tickCoef);
-        return timeInMinutes;
+        return time;
     }
 }
