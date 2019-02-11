@@ -1,76 +1,89 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DayCycle : MonoBehaviour
 {
     public int dayDuration = 3000;
-    public float speed = 1f;
-    public float maxIntensity = 2.5f;
+    public bool dayCycleEnabled, timeTrackingEnabled = true;
 
     private Light _light;
+    private Gradient _gradient, _gradientDay;
+    private GradientAlphaKey[] _gradientAlphaKeys;
+    private GradientColorKey[] _gradientColorKeys;
     private int _ticksPassed;
-    private float _tickCoef, _intensityGain;
-    private bool _sundown = true;
+    private bool _night;
     private int _dayspassed;
 
     // Start is called before the first frame update
     void Start()
     {
         _light = GetComponent<Light>();
-        _tickCoef = 720f / dayDuration; //there are 720 minutes in 12 hours, so half a full day
+        _gradient = new Gradient();
 
-        _intensityGain = maxIntensity / (dayDuration);
+        _gradientAlphaKeys = new GradientAlphaKey[2];
+        _gradientAlphaKeys[0].alpha = 1.0f;
+        _gradientAlphaKeys[0].time = 0.0f;
+        _gradientAlphaKeys[1].alpha = 0.0f;
+        _gradientAlphaKeys[1].time = 1.0f;
+
+        _gradientColorKeys = new GradientColorKey[3];
+        _gradientColorKeys[0].color = Color.black;
+        _gradientColorKeys[0].time = 0.0f;
+        _gradientColorKeys[1].color = Color.white;
+        _gradientColorKeys[1].time = 0.5f;
+        _gradientColorKeys[2].color = Color.black;
+        _gradientColorKeys[2].time = 1.0f;
+
+        _gradient.SetKeys(_gradientColorKeys, _gradientAlphaKeys);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (_sundown  && _light.intensity >= 0)
+        if (dayCycleEnabled)
         {
-            float intensity = _light.intensity;
-            intensity -= _intensityGain*speed;
-            _light.intensity = intensity;
-        }
-        else if (!_sundown  && _light.intensity <= maxIntensity)
-        {
-            float intensity = _light.intensity;
-            intensity += _intensityGain * speed;
-            _light.intensity = intensity;
+            _light.color = _gradient.Evaluate((float)((GetCurrentTime() / dayDuration))); //Set light leven on a gradient
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
-            int timeinMinutes = GetCurrentTime();
-            int hours = timeinMinutes / 60;
-            if (hours == 0)
+            if (Night() == true)
             {
-                hours = 12;
+                Debug.Log("Night");
             }
-            int minutes = timeinMinutes % 60;
-            Debug.Log(hours + ":" + minutes);
-            Debug.Log(_tickCoef + ":" + _ticksPassed + ":"+_dayspassed);
+            else
+            {
+                Debug.Log("Day");
+            }
         }
-        
-        if (_ticksPassed % dayDuration == 0)
+        if (Input.GetKeyDown(KeyCode.M))
         {
-            _sundown = !_sundown;
-            if (_ticksPassed % (dayDuration*2) == 0)
-            {
-                _dayspassed++;
-            }
+            
         }
-
-        _ticksPassed++;
-
-
+        if (timeTrackingEnabled)
+        {
+            _ticksPassed++; //Track amounts of ticks passed
+        }
     }
     /// <summary>
     /// Returns current time in ticks
     /// </summary>
     /// <returns></returns>
-    public int GetCurrentTime()
+    public float GetCurrentTime()
     {
         int time = _ticksPassed % dayDuration;
         return time;
+    }
+    public bool Night()
+    {
+        if ((GetCurrentTime() <= (dayDuration / 4)) || (GetCurrentTime() >= (dayDuration * 0.75)))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
