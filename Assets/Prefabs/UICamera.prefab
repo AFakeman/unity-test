@@ -69,11 +69,11 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 1cc75d3a577174983a83ea4b4e0e199c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: af92d3c8b71194a07bc3ef8c1c16991a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 1
+  m_DrawMode: 2
   m_Size: {x: 0.4, y: 0.2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
@@ -93,11 +93,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   marginLeft: 8
-  marginRight: 6
-  marginTop: 6
+  marginRight: 8
+  marginTop: 8
   marginBottom: 8
   spacingX: 4
-  fillLeftToRight: 1
   sortingLayerName: UI
   sortingOrder: 1
 --- !u!1 &1972431526042962243
