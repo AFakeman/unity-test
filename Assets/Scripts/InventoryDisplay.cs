@@ -71,5 +71,5 @@ public class InventoryDisplay : MonoBehaviour
         var zPos = itemBubble.transform.localPosition.z;
         itemBubble.transform.localPosition = new Vector3(xPos, yPos, zPos);
     }
-}        
+}
 

@@ -54,6 +54,10 @@ public class ItemBubble : MonoBehaviour
 
     public void RenderSprites(IEnumerable<Sprite> icons)
     {
+        if (icons == null)
+        {
+            RenderSprites((IEnumerable<StyledIcon>) null);
+        }
         var styledIcons = icons.Select(
             sprite => new StyledIcon()
             {
@@ -66,7 +70,7 @@ public class ItemBubble : MonoBehaviour
     public void RenderSprites(IEnumerable<StyledIcon> icons)
     {
         ResetSprites();
-        if (icons == null)
+        if (icons == null || !icons.Any())
         {
             gameObject.SetActive(false);
             return;
