@@ -9,7 +9,7 @@ public class PlayerInteractionController : MonoBehaviour
 {
     public Sprite itemUseThought;
     public ItemBubble thoughtBubble;
-    
+
     private const uint maxInventorySize = 5;
     private uint WaitTime;
     private uint Cooldown;
@@ -27,7 +27,7 @@ public class PlayerInteractionController : MonoBehaviour
     {
 
     }
-    
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -54,7 +54,7 @@ public class PlayerInteractionController : MonoBehaviour
         else
         {
             if (_itemInUse)
-            { 
+            {
                 Debug.unityLogger.Log("Use");
                 _itemInUse.Use(this);
                 _itemInUse = null;
@@ -104,7 +104,7 @@ public class PlayerInteractionController : MonoBehaviour
         return closestItem;
     }
 
-    
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.unityLogger.Log("TriggerEnter");
@@ -116,7 +116,7 @@ public class PlayerInteractionController : MonoBehaviour
         }
     }
 
-    private void SetThoughtForInteractableItem(InteractableItem item) 
+    private void SetThoughtForInteractableItem(InteractableItem item)
     {
         if (!item)
         {
@@ -144,7 +144,7 @@ public class PlayerInteractionController : MonoBehaviour
                 var sprite = _inventoryDisplay.iconSprites[priceCount.Key.Name];
                 var inventoryCount = inventory.ContainsKey(priceCount.Key) ? inventory[priceCount.Key] : 0;
                 int i;
-                for (i = 0; i < inventoryCount; ++i)
+                for (i = 0; i < inventoryCount && i < priceCount.Value; ++i)
                 {
                     thought.Add(new ItemBubble.StyledIcon(){Sprite = sprite, Style = ItemBubble.Style.Solid});
                 }
@@ -161,12 +161,12 @@ public class PlayerInteractionController : MonoBehaviour
         }
         thoughtBubble.RenderSprites(thought);
     }
-    
+
     private void OnTriggerExit2D(Collider2D other)
     {
         Debug.unityLogger.Log("TriggerExit");
         var a = other.gameObject.GetComponent<InteractableItem>();
-        
+
         if (a && a == _itemInUse)
         {
             Debug.unityLogger.Log("Use interrupted");
@@ -198,14 +198,17 @@ public class PlayerInteractionController : MonoBehaviour
 
     public bool CanSpendItems(List<InventoryItem> items)
     {
+        Dictionary<InventoryItem, int> counts = (
+            from s in items group s by s into g select
+            new { Stuff = g.Key, Count = g.Count() }
+        ).ToDictionary(g => g.Stuff, g => g.Count);
+
         foreach (var item in items)
         {
-            if (!inventory.ContainsKey(item) || inventory[item] == 0)
+            if (!inventory.ContainsKey(item) || inventory[item] < counts[item])
             {
                 return false;
             }
-
-            inventory[item]--;
         }
 
         return true;
@@ -219,6 +222,10 @@ public class PlayerInteractionController : MonoBehaviour
         }
 
         inventory[item]--;
+        if (inventory[item] == 0)
+        {
+            inventory.Remove(item);
+        }
         return true;
     }
 }
