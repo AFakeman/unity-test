@@ -5,6 +5,8 @@ using UnityEngine;
 public class DoorController : InteractableItem
 {
     private Animator animator;
+    private bool _open = false;
+    public BoxCollider2D physicalCollider;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,10 +24,12 @@ public class DoorController : InteractableItem
     }
     public void Open(PlayerInteractionController Caller)
     {
-        animator.SetBool("Open", true);
+        _open = !_open;
+        animator.SetBool("Open", _open);
+        physicalCollider.enabled = !physicalCollider.enabled;
     }
     public override uint GetUseTime(PlayerInteractionController Caller)
     {
-        throw new System.NotImplementedException();
+        return interactionTime;
     }
 }
