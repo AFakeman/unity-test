@@ -66,7 +66,7 @@ public class ItemBubble : MonoBehaviour
     public void RenderSprites(IEnumerable<StyledIcon> icons)
     {
         ResetSprites();
-        if (icons == null || icons.Count == 0)
+        if (icons == null)
         {
             gameObject.SetActive(false);
             return;
@@ -117,16 +117,15 @@ public class ItemBubble : MonoBehaviour
         return gameObjectForIcon;
     }
 
-    private Vector2 BubbleSizeForIcons(List<StyledIcon> icons)
+    private Vector2 BubbleSizeForIcons(IEnumerable<StyledIcon> icons)
     {
-        int width = marginLeft + marginRight;
-        width += (icons.Count - 1) * spacingX;
+        int width = marginLeft + marginRight - spacingX;
         int maxSpriteHeight = 0;
 
         foreach (var icon in icons)
         {
             var spriteRect = icon.Sprite.rect;
-            width += (int) spriteRect.width;
+            width += (int) spriteRect.width + spacingX;
             if (spriteRect.height  > maxSpriteHeight)
             {
                 maxSpriteHeight = (int) spriteRect.height;
