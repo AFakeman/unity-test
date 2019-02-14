@@ -6,7 +6,7 @@ public class PickableItem : InteractableItem
 {
     public string itemName;
     private InventoryItem _item;
-    
+
     void Start()
     {
         _item = new InventoryItem();
@@ -21,6 +21,7 @@ public class PickableItem : InteractableItem
         }
 
     }
+
     public override uint GetUseTime(PlayerInteractionController Caller)
     {
         return interactionTime;

@@ -16,12 +16,11 @@ public class PlayerInteractionController : MonoBehaviour
     private Animator animator;
     private InventoryDisplay _inventoryDisplay;
 
-    public List<InventoryItem> inventory;
+    public Dictionary<InventoryItem, int> inventory = new Dictionary<InventoryItem, int>();
 
     private List<InteractableItem> _interactableItems;
     private InteractableItem _itemInUse;
     private InteractableItem _itemInMind;
-    private List<InventoryItem> _inventory = new List<InventoryItem>();
 
     // Start is called before the first frame update
     void Start()
@@ -121,21 +120,44 @@ public class PlayerInteractionController : MonoBehaviour
     {
         if (!item)
         {
-            thoughtBubble.RenderSprites(null);
+            thoughtBubble.RenderSprites((List<ItemBubble.StyledIcon>) null);
             return;
         }
-        var thought = new List<Sprite>();
+        var thought = new List<ItemBubble.StyledIcon>();
         if (item is ItemSpendingItem it)
         {
+            var priceCounts = new Dictionary<InventoryItem, int>();
             foreach (InventoryItem inventoryItem in it.Price)
             {
-                var sprite = _inventoryDisplay.iconSprites[inventoryItem.Name];
-                thought.Add(sprite);
+                if (!priceCounts.ContainsKey(inventoryItem))
+                {
+                    priceCounts.Add(inventoryItem, 1);
+                }
+                else
+                {
+                    priceCounts[inventoryItem]++;
+                }
+            }
+
+            foreach (var priceCount in priceCounts)
+            {
+                var sprite = _inventoryDisplay.iconSprites[priceCount.Key.Name];
+                var inventoryCount = inventory.ContainsKey(priceCount.Key) ? inventory[priceCount.Key] : 0;
+                int i;
+                for (i = 0; i < inventoryCount; ++i)
+                {
+                    thought.Add(new ItemBubble.StyledIcon(){Sprite = sprite, Style = ItemBubble.Style.Solid});
+                }
+
+                for (; i < priceCount.Value; ++i)
+                {
+                    thought.Add(new ItemBubble.StyledIcon(){Sprite = sprite, Style = ItemBubble.Style.Semitransparent});
+                }
             }
         }
         else
         {
-            thought.Add(itemUseThought);
+            thought.Add(new ItemBubble.StyledIcon(){Sprite = itemUseThought, Style = ItemBubble.Style.Solid});
         }
         thoughtBubble.RenderSprites(thought);
     }
@@ -162,30 +184,28 @@ public class PlayerInteractionController : MonoBehaviour
         {
             return false;
         }
-        inventory.Add(item);
+
+        if (!inventory.ContainsKey(item))
+        {
+            inventory.Add(item, 1);
+        }
+        else
+        {
+            inventory[item]++;
+        }
         return true;
     }
 
     public bool CanSpendItems(List<InventoryItem> items)
     {
-        Dictionary<string, uint> counts = new Dictionary<string, uint>();
-        foreach (var item in inventory)
-        {
-            if (!counts.ContainsKey(item.Name))
-            {
-                counts[item.Name] = 0;
-            }
-            counts[item.Name] += 1;
-        }
-
         foreach (var item in items)
         {
-            if (!counts.ContainsKey(item.Name) || counts[item.Name] == 0)
+            if (!inventory.ContainsKey(item) || inventory[item] == 0)
             {
                 return false;
             }
 
-            counts[item.Name]--;
+            inventory[item]--;
         }
 
         return true;
@@ -193,6 +213,12 @@ public class PlayerInteractionController : MonoBehaviour
 
     public bool RemoveItem(InventoryItem item)
     {
-        return inventory.Remove(inventory.First(it => it.Name == item.Name));
+        if (!inventory.ContainsKey(item))
+        {
+            return false;
+        }
+
+        inventory[item]--;
+        return true;
     }
 }

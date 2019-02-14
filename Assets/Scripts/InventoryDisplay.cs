@@ -19,7 +19,7 @@ public class InventoryDisplay : MonoBehaviour
     public List<ItemPair> ItemList;
     public Dictionary<string, Sprite> iconSprites;
 
-    private List<InventoryItem> renderedItems = new List<InventoryItem>();
+    private Dictionary<InventoryItem, int> renderedItems = new Dictionary<InventoryItem, int>();
     private SpriteRenderer _itemBubbleSR;
 
     // Start is called before the first frame update
@@ -40,20 +40,26 @@ public class InventoryDisplay : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (!renderedItems.SequenceEqual(player.inventory))
+        if (player.inventory.Count != renderedItems.Count || renderedItems.Except(player.inventory).Any())
         {
             RenderItems(player.inventory);
         }
-        
     }
 
     // Renders items. The item sprites should be the same size, or,
     // at least, the same pixels per unit.
-    private void RenderItems(List<InventoryItem> toRender)
+    private void RenderItems(Dictionary<InventoryItem, int> toRender)
     {
         Debug.unityLogger.Log("RedrawInventory");
-        renderedItems = new List<InventoryItem>(toRender);
-        var spritesToRender = toRender.Select(item => iconSprites[item.Name]).ToList();
+        renderedItems = new Dictionary<InventoryItem, int>(toRender);
+        var spritesToRender = new List<Sprite>();
+        foreach (var itemPair in toRender)
+        {
+            for (int i = 0; i < itemPair.Value; ++i)
+            {
+                spritesToRender.Add(iconSprites[itemPair.Key.Name]);
+            }
+        }
         itemBubble.RenderSprites(spritesToRender);
         AlignBubble();
     }

@@ -1127,6 +1127,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5877328191215658315, guid: 25e60513e9e8c5747af689e234b67526,
+        type: 3}
+      propertyPath: itemUseThought
+      value: 
+      objectReference: {fileID: 21300000, guid: 9704b060bb6dd49699437288750f8782,
+        type: 3}
     - target: {fileID: 2262001699665483391, guid: 25e60513e9e8c5747af689e234b67526,
         type: 3}
       propertyPath: m_LocalPosition.x
