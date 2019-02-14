@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +17,18 @@ public class ItemBubble : MonoBehaviour
     public int spacingX = 2;
     public string sortingLayerName = "UI";
     public int sortingOrder = 1;
+
+    public enum Style
+    {
+        Solid,
+        Semitransparent,
+    }
+
+    public struct StyledIcon
+    {
+        public Style Style;
+        public Sprite Sprite;
+    }
 
     private SpriteRenderer _bubble_sr;
 
@@ -38,7 +52,18 @@ public class ItemBubble : MonoBehaviour
         return p / _bubble_sr.sprite.pixelsPerUnit;
     }
 
-    public void RenderSprites(List<Sprite> icons)
+    public void RenderSprites(IEnumerable<Sprite> icons)
+    {
+        var styledIcons = icons.Select(
+            sprite => new StyledIcon()
+            {
+                Sprite = sprite, Style = Style.Solid
+            }
+        );
+        RenderSprites(styledIcons);
+    }
+
+    public void RenderSprites(IEnumerable<StyledIcon> icons)
     {
         ResetSprites();
         if (icons == null || icons.Count == 0)
@@ -48,49 +73,68 @@ public class ItemBubble : MonoBehaviour
         }
 
         gameObject.SetActive(true);
-        
-        int width = marginLeft + marginRight;
-        int maxSpriteHeight = 0;
 
-        for (int i = 0; i < icons.Count; ++i)
+        var newSize = BubbleSizeForIcons(icons);
+        _bubble_sr.size = newSize;
+
+        float xPos = - (newSize.x * _bubble_sr.sprite.pixelsPerUnit / 2.0f) + marginLeft;
+        float yPos = (marginBottom - marginTop) / 2.0f;
+
+        var i = 0;
+        foreach (var icon in icons)
         {
-            var icon = icons[i];
-            width += (int) icon.rect.width;
-            if (icon.rect.height  > maxSpriteHeight)
-            {
-                maxSpriteHeight = (int) icon.rect.height;
-            }
-
-            var gameObject = new GameObject("Icon" + i.ToString());
-            var spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            spriteRenderer.sprite = icon;
-            gameObject.transform.parent = transform;
-            var rend = gameObject.GetComponent<SpriteRenderer>();
-            rend.sortingLayerName = sortingLayerName;
-            rend.sortingOrder = sortingOrder;
-
-            gameObject.transform.localScale = Vector3.one;
-            gameObject.layer = 5;
-        }
-
-        width += (icons.Count - 1) * spacingX;
-
-        int height = maxSpriteHeight + marginTop + marginBottom;
-        _bubble_sr.size = new Vector2(PixelsToUnits(width), PixelsToUnits(height));
-
-        float xPos = - (width / 2.0f) + marginLeft;
-        float yPos = marginBottom + maxSpriteHeight / 2.0f - height / 2.0f;
-
-        foreach (Transform trans in transform)
-        {
-            var spriteWidth = trans.GetComponent<SpriteRenderer>().sprite.rect.width;
-            trans.localPosition = new Vector3(
-                PixelsToUnits(xPos + spriteWidth / 2), 
+            var gameObjectForIcon = CreateGameObjectForIcon(icon, "Icon" + i);
+            gameObjectForIcon.transform.localPosition = new Vector3(
+                PixelsToUnits(xPos + icon.Sprite.rect.width / 2),
                 PixelsToUnits(yPos),
                 -0.1f
             );
-            xPos += (int) spriteWidth + spacingX;
+
+            xPos += (int) icon.Sprite.rect.width + spacingX;
+            ++i;
         }
+    }
+
+    private GameObject CreateGameObjectForIcon(StyledIcon icon, String name)
+    {
+        var gameObjectForIcon = new GameObject(name);
+        gameObjectForIcon.transform.parent = transform;
+        gameObjectForIcon.transform.localScale = Vector3.one;
+        gameObjectForIcon.layer = 5;
+
+        var spriteRenderer = gameObjectForIcon.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = icon.Sprite;
+        spriteRenderer.sortingLayerName = sortingLayerName;
+        spriteRenderer.sortingOrder = sortingOrder;
+
+        switch(icon.Style)
+        {
+            case Style.Semitransparent:
+                spriteRenderer.color = new Color(1f, 1f, 1f, .5f);
+            break;
+        }
+
+        return gameObjectForIcon;
+    }
+
+    private Vector2 BubbleSizeForIcons(List<StyledIcon> icons)
+    {
+        int width = marginLeft + marginRight;
+        width += (icons.Count - 1) * spacingX;
+        int maxSpriteHeight = 0;
+
+        foreach (var icon in icons)
+        {
+            var spriteRect = icon.Sprite.rect;
+            width += (int) spriteRect.width;
+            if (spriteRect.height  > maxSpriteHeight)
+            {
+                maxSpriteHeight = (int) spriteRect.height;
+            }
+        }
+
+        int height = maxSpriteHeight + marginTop + marginBottom;
+        return new Vector2(PixelsToUnits(width), PixelsToUnits(height));
 
     }
 
@@ -102,6 +146,5 @@ public class ItemBubble : MonoBehaviour
              child.parent = null;
              GameObject.Destroy(child.gameObject);
          }
-
     }
 }
