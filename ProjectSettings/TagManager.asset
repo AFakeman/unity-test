@@ -16,10 +16,10 @@ TagManager:
   - PostProcessing
   - Char
   - Interior
-  - 
-  - 
-  - 
-  - 
+  - light sources
+  - light obstacles
+  - ambient light
+  - Background
   - 
   - 
   - 
