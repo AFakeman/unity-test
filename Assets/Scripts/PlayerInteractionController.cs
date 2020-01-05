@@ -77,10 +77,13 @@ public class PlayerInteractionController : MonoBehaviour
                     animator.SetBool("action", true);
                     Debug.unityLogger.Log(animator.GetBool("action"));
                 }
-                else if (_itemInMind != closestItem)
+                else
                 {
-                    _itemInMind = closestItem;
-                    SetThoughtForInteractableItem(closestItem);
+                    if (_itemInMind != closestItem)
+                    {
+                        _itemInMind = closestItem;
+                    }
+                    SetThoughtForInteractableItem(_itemInMind);
                 }
             }
         }
@@ -157,7 +160,7 @@ public class PlayerInteractionController : MonoBehaviour
         }
         else
         {
-            thought.Add(new ItemBubble.StyledIcon(){Sprite = itemUseThought, Style = ItemBubble.Style.Solid});
+            thought.Add(new ItemBubble.StyledIcon(){Sprite = item.GetSprite(this)[0], Style = ItemBubble.Style.Solid});
         }
         thoughtBubble.RenderSprites(thought);
     }

@@ -8,6 +8,9 @@ public class DoorController : InteractableItem
     private bool _open = false;
     private bool _broken = true;
     public BoxCollider2D physicalCollider;
+    public BoxCollider2D standCollider;
+    public Sprite UseSprite;
+    public Sprite ForbiddenSprite;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,11 +25,15 @@ public class DoorController : InteractableItem
     }
     public override void Use(PlayerInteractionController Caller)
     {
-        Open(Caller);
+        if (!IsPlayerInBounds(Caller.gameObject))
+        {
+            Open(Caller);
+        }
+        
     }
     public void Open(PlayerInteractionController Caller)
     {
-        if (_broken)
+        if (_broken) 
         {
             FixDoor();
         }
@@ -46,5 +53,33 @@ public class DoorController : InteractableItem
     public override uint GetUseTime(PlayerInteractionController Caller)
     {
         return interactionTime;
+    }
+    private bool IsPlayerInBounds(GameObject Player)
+    {
+        BoxCollider2D playerCollider = Player.GetComponent<BoxCollider2D>();
+        if (standCollider.bounds.Intersects(playerCollider.bounds))
+        {
+            Debug.Log("You're standing in the fucking door you wanker");
+            return true;
+        }
+        else
+        {
+            Debug.Log("Good Job you're out of the bounds of the door youre still a cunt");
+            return false;
+        }
+
+    }
+    public override List<Sprite> GetSprite(PlayerInteractionController Caller)
+    {
+        List <Sprite> sprites = new List<Sprite>();
+        if (IsPlayerInBounds(Caller.gameObject))
+        {
+            sprites.Add(ForbiddenSprite);
+        }
+        else
+        {
+            sprites.Add(UseSprite);
+        }
+        return sprites;
     }
 }
