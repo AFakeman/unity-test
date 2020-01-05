@@ -14,4 +14,10 @@ public abstract class InteractableItem : MonoBehaviour
     {
         return true;
     }
+    public virtual List<Sprite> GetSprite(PlayerInteractionController Caller)
+    {
+        Sprite sprite = Resources.Load<Sprite>("hack-gear");
+        List<Sprite> sprites = new List<Sprite>() { sprite };
+        return sprites;
+    }
 }
